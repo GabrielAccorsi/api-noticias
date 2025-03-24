@@ -14,6 +14,7 @@ import produtos from './src/produtos.json' with {type:'json'}
 */
 //importar as rotas
 import userRoutes from './routes/user.routes.js'
+import authRoutes from './routes/auth.routes.js'
 //constantes
 dotenv.config();
 
@@ -23,6 +24,7 @@ const app = express()
 connectDatabase()
 app.use(express.json())
 app.use("/user",userRoutes)
+app.use("/auth",authRoutes)
 
 
 

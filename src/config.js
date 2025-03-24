@@ -1,9 +1,7 @@
 
 const config = {
-    port: process.env.PORT,
+    port: process.env.PORT || 3000,
     host: process.env.HOST,
-    pwd_admin: '1234@1234',
-    db_url: 'http://www.google.com'
 }
 
 //exportando como elemento unico
