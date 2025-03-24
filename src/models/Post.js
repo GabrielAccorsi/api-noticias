@@ -3,15 +3,15 @@ import mongoose from "mongoose";
 const PostSchema = new mongoose.Schema({
   title: {
     type: String,
-    require: true,
+    required: true,
   },
   text: {
     type: String,
-    require: true,
+    required: true,
   },
   banner: {
     type: String,
-    require: true,
+    required: true,
   },
   createdAt: {
     type: Date,
@@ -20,13 +20,13 @@ const PostSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    require: true,
+    required: true,
   },
   likes: {
     type: Array,
-    require: true,
+    required: true,
   },
-  comments: { type: Array, require: true },
+  comments: { type: Array, required: true },
 });
 
 const Post = mongoose.model("Post", PostSchema)

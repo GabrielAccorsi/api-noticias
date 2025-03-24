@@ -6,4 +6,4 @@ const findAllService = () => Post.find();
 
 
 
-export { createService, findAllService, findByIdService };
+export { createService, findAllService };

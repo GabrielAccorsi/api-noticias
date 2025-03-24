@@ -14,17 +14,23 @@ const create = async (req, res) => {
         title,
         text,
         banner,
-        id:"objectidfake1",
+        user: {_id:"67cf429756f8c395fd494968"},
     });
 
-    res.send(201);
+    res.sendStatus(201);
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
 };
 const findAll = async (req, res) => {
-  const post = [];
-  res.send(post);
+  const posts = await findAllService();
+  if (posts.length === 0) {
+    return res
+      .status(400)
+      .send({ message: "There are no posts yet :(" });
+  }
+
+  res.send(posts);
 };
 
 export { create, findAll };
