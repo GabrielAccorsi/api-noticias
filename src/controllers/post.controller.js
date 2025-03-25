@@ -11,10 +11,10 @@ const create = async (req, res) => {
     }
 
     await createService({
-        title,
-        text,
-        banner,
-        user: {_id:"67cf429756f8c395fd494968"},
+      title,
+      text,
+      banner,
+      user: req.userId,
     });
 
     res.sendStatus(201);
@@ -25,9 +25,7 @@ const create = async (req, res) => {
 const findAll = async (req, res) => {
   const posts = await findAllService();
   if (posts.length === 0) {
-    return res
-      .status(400)
-      .send({ message: "There are no posts yet :(" });
+    return res.status(400).send({ message: "There are no posts yet :(" });
   }
 
   res.send(posts);
