@@ -1,4 +1,9 @@
-import { createService, findAllService } from "../services/post.service.js";
+import { text } from "express";
+import {
+  createService,
+  findAllService,
+  countPosts,
+} from "../services/post.service.js";
 
 const create = async (req, res) => {
   try {
@@ -11,10 +16,10 @@ const create = async (req, res) => {
     }
 
     await createService({
-        title,
-        text,
-        banner,
-        user: {_id:"67cf429756f8c395fd494968"},
+      title,
+      text,
+      banner,
+      user: req.userId,
     });
 
     res.sendStatus(201);
@@ -23,14 +28,51 @@ const create = async (req, res) => {
   }
 };
 const findAll = async (req, res) => {
-  const posts = await findAllService();
+  let { limit, offset } = req.query;
+
+  limit = Number(limit);
+  offset = Number(offset);
+
+  if (!limit) limit = 5;
+  if (!offset) offset = 0;
+
+  const posts = await findAllService(offset, limit);
+  const total = await countPosts();
+  const currentUrl = req.baseUrl;
+
+  const next = offset + limit;
+  const nextUrl =
+    next < total ? `${currentUrl}?limit=${limit}&offset=${next}` : null;
+
+  const previous = offset - limit < 0 ? null : offset - limit;
+  const previousUrl =
+    previous != null ? `${currentUrl}?limit=${limit}&offset=${previous}` : null;
+
   if (posts.length === 0) {
-    return res
-      .status(400)
-      .send({ message: "There are no posts yet :(" });
+    return res.status(400).send({ message: "There are no posts yet :(" });
   }
 
-  res.send(posts);
+  res.send({
+    nextUrl,
+    previousUrl,
+    limit,
+    offset,
+    total,
+
+    results: posts.map((item)=>({
+      id: item._id,
+      title:item.title,
+      text: item.text,
+      banner: item.banner,
+      likes: item.likes,
+      comments: item.comments,
+      name:item.user.name,
+      userName:item.user.username,
+      userAvatar:item.user.avatar
+
+
+    }))
+});
 };
 
 export { create, findAll };
