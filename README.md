@@ -1,4 +1,5 @@
 # Forum API 🚀
+![Image](https://github.com/user-attachments/assets/35c13ba6-9754-4250-a40c-bfa47dd4330d)
 
 ## Descrição
 
