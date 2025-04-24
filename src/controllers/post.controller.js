@@ -38,6 +38,7 @@ const findAll = async (req, res) => {
 
   const posts = await findAllService(offset, limit);
   const total = await countPosts();
+  console.log(total);
   const currentUrl = req.baseUrl;
 
   const next = offset + limit;
@@ -66,9 +67,9 @@ const findAll = async (req, res) => {
       banner: item.banner,
       likes: item.likes,
       comments: item.comments,
-      name:item.user.name,
-      userName:item.user.username,
-      userAvatar:item.user.avatar
+      name:item.user?.name || "Usuário removido",
+      userName:item.user?.username|| "Usuário removido",
+      userAvatar:item.user?.avatar|| "Usuário removido"
 
 
     }))

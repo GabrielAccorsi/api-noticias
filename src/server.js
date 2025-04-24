@@ -16,6 +16,7 @@ import produtos from './src/produtos.json' with {type:'json'}
 import userRoutes from './routes/user.routes.js'
 import authRoutes from './routes/auth.routes.js'
 import postRoutes from './routes/post.routes.js'
+import upload from './middlewares/image.routes.js'
 //constantes
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use(express.json())
 app.use("/user", userRoutes)
 app.use("/auth", authRoutes)
 app.use("/post", postRoutes)
+app.use("/upload", upload)
 
 
 
