@@ -62,7 +62,7 @@ const userController = {
           .send({ messege: "Submit at least one field for update" });
       }
 
-      const { id, user } = req;
+      const { id } = req;
 
       await userService.updateService(
         id,

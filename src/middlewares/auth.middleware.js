@@ -9,7 +9,7 @@ export const authMiddleware = async (req,res,next) =>{
 
    const {authorization} = req.headers
 
-    if (!authorization) return res.send(401);
+    if (!authorization) return res.status(401).send("Authorization header is missing");
     
     const parts = authorization.split(" ")
     if (parts.length !== 2) return res.send(401);
