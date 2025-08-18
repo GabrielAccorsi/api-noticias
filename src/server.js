@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 //importando com export default
 import config from './config.js'
 import connectDatabase from './database/db.js'
+import cors from "cors";
 /*importar elementos separados de um js export
 
 //import { soma, subt } from './src/controllers/user.controller.js'
@@ -19,11 +20,13 @@ import postRoutes from './routes/post.routes.js'
 import swaggerRoutes from './routes/swagger.routes.js'
 //import upload from './routes/image.routes.js'
 //constantes
+
 dotenv.config();
 
 
 const app = express()
 //usar as rotas
+app.use(cors());
 connectDatabase()
 app.use(express.json())
 app.use("/user", userRoutes)
