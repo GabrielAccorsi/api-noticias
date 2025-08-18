@@ -11,6 +11,10 @@
   },
   "servers": [
     {
+      "url": "https://api-noticias-9c20.onrender.com",
+      "description": "Servidor de produção"
+    },
+    {
       "url": "http://localhost:3000",
       "description": "Servidor de desenvolvimento local"
     }
