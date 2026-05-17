@@ -1,39 +1,55 @@
 import dotenv from 'dotenv'
-import jwt, { decode } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import userService from '../services/user.service.js';
 
 dotenv.config()
 
-export const authMiddleware = async (req,res,next) =>{
-  try{
+export const authMiddleware = async (req, res, next) => {
+  try {
+    const { authorization } = req.headers;
 
-   const {authorization} = req.headers
+    if (!authorization) {
+      return res.status(401).send({
+        message: "Authorization header is missing",
+      });
+    }
 
-    if (!authorization) return res.status(401).send("Authorization header is missing");
-    
-    const parts = authorization.split(" ")
-    if (parts.length !== 2) return res.send(401);
- 
-    const [schema,token] = parts 
+    const parts = authorization.split(" ");
 
-    if (schema !== "Bearer") return res.send(401);
+    if (parts.length !== 2) {
+      return res.status(401).send({
+        message: "Invalid token",
+      });
+    }
 
-    jwt.verify(token,process.env.SECRET_JWT, async (error,decoded)=>{
-        if (error) return res.status(401).send("Invalid Token");
+    const [schema, token] = parts;
 
-  
-        const user = await userService.findByIdService(decoded.id)
-       
-        if (!user ||!user.id) return res.status(401).send("Invalid Token");
-        
-        req.userId= decoded.id
+    if (schema.toLowerCase() !== "bearer") {
+      return res.status(401).send({
+        message: "Invalid token",
+      });
+    }
 
-       return next();
-    })
+    const decoded = jwt.verify(
+      token,
+      process.env.SECRET_JWT
+    );
 
-   
-  }catch(err){
-    res.status(500).send({ message: err.message });
+    const user = await userService.findByIdService(decoded.id);
+
+    if (!user) {
+      return res.status(401).send({
+        message: "Invalid token",
+      });
+    }
+
+    req.userId = decoded.id;
+
+    next();
+
+  } catch (err) {
+    return res.status(401).send({
+      message: "Invalid token",
+    });
   }
-
-}
+};
