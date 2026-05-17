@@ -32,7 +32,7 @@ const create = async (req, res) => {
 
     return res.status(201).send({ message: "Post created successfully" });
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 
@@ -44,30 +44,17 @@ const findAll = async (req, res) => {
     const posts = await findAllService(offset, limit);
     const total = await countPosts();
     console.log(total);
-    const currentUrl = req.baseUrl;
 
     const next = offset + limit;
-    const nextUrl =
-      next < total ? `${currentUrl}?limit=${limit}&offset=${next}` : null;
-
     const previous = offset - limit < 0 ? null : offset - limit;
-    const previousUrl =
-      previous != null
-        ? `${currentUrl}?limit=${limit}&offset=${previous}`
-        : null;
 
     if (posts.length === 0) {
       return res.status(400).send({ message: "There are no posts yet :(" });
     }
 
     return res.send({
-      nextUrl,
-      previousUrl,
-      limit,
-      offset,
-      total,
-
-      results: posts.map((item) => ({
+      message: "Posts fetched successfully",
+      data: posts.map((item) => ({
         id: item._id,
         title: item.title,
         text: item.text,
@@ -78,9 +65,16 @@ const findAll = async (req, res) => {
         userName: item.user?.username || "Usuário removido",
         userAvatar: item.user?.avatar || "Usuário removido",
       })),
+      pagination: {
+        total,
+        offset,
+        limit,
+        next: next < total ? next : null,
+        previous,
+      },
     });
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 
@@ -98,8 +92,8 @@ const topPosts = async (req, res) => {
         title: item.title,
         text: item.text,
         banner: item.banner,
-        likesCount: item.likesCount,
         likes: item.likes,
+        likesCount: item.likesCount,
         comments: item.comments,
         name: item.user?.name || "Usuário removido",
         userName: item.user?.username || "Usuário removido",
@@ -107,7 +101,7 @@ const topPosts = async (req, res) => {
       })),
     });
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 const findById = async (req, res) => {
@@ -119,18 +113,21 @@ const findById = async (req, res) => {
 
     if (!post) return res.status(404).send({ message: "Post not found" });
     return res.send({
-      id: post._id,
-      title: post.title,
-      text: post.text,
-      banner: post.banner,
-      likes: post.likes,
-      comments: post.comments,
-      name: post.user?.name || "Usuário removido",
-      userName: post.user?.username || "Usuário removido",
-      userAvatar: post.user?.avatar || "Usuário removido",
+      message: "Post fetched successfully",
+      data: {
+        id: post._id,
+        title: post.title,
+        text: post.text,
+        banner: post.banner,
+        likes: post.likes,
+        comments: post.comments,
+        name: post.user?.name || "Usuário removido",
+        userName: post.user?.username || "Usuário removido",
+        userAvatar: post.user?.avatar || "Usuário removido",
+      },
     });
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 const searchByTitle = async (req, res) => {
@@ -150,7 +147,8 @@ const searchByTitle = async (req, res) => {
         .send({ message: "There are no posts with this title" });
     }
     return res.send({
-      results: posts.map((item) => ({
+      message: "Posts fetched successfully",
+      data: posts.map((item) => ({
         id: item._id,
         title: item.title,
         text: item.text,
@@ -163,7 +161,7 @@ const searchByTitle = async (req, res) => {
       })),
     });
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 const byUser = async (req, res) => {
@@ -178,7 +176,8 @@ const byUser = async (req, res) => {
         .send({ message: "There are no posts from this user" });
     }
     return res.send({
-      results: posts.map((item) => ({
+      message: "User posts fetched successfully",
+      data: posts.map((item) => ({
         id: item._id,
         title: item.title,
         text: item.text,
@@ -191,7 +190,7 @@ const byUser = async (req, res) => {
       })),
     });
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 const update = async (req, res) => {
@@ -216,7 +215,7 @@ const update = async (req, res) => {
     await updateService(id, title, text, banner);
     return res.send({ message: "Post updated successfully" });
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 const erase = async (req, res) => {
@@ -235,7 +234,7 @@ const erase = async (req, res) => {
     await eraseService(id);
     return res.send({ message: "Post deleted successfully" });
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 const likePost = async (req, res) => {
@@ -258,7 +257,7 @@ const likePost = async (req, res) => {
 
     return res.send({ message: "Post liked successfully" });
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 const addComment = async (req, res) => {
@@ -276,9 +275,9 @@ const addComment = async (req, res) => {
       return res.status(404).send({ message: "Post not found" });
     }
 
-    return res.send({ message: "Comment added successfully" });
+    return res.status(201).send({ message: "Comment added successfully" });
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 

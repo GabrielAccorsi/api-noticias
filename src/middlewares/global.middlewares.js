@@ -12,7 +12,7 @@ export const validId = async (req, res, next) => {
     }
     next();
   } catch (err) {
-    res.status(500).send({ message: err.message });
+    res.status(500).send({ message: "Internal server error" });
   }
 };
 
@@ -30,6 +30,6 @@ export const validUser = async (req, res, next) => {
 
     next();
   } catch (err) {
-    res.status(500).send({ message: err.message });
+    res.status(500).send({ message: "Internal server error" });
   }
 };

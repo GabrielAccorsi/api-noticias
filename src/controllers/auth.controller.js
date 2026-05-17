@@ -12,9 +12,12 @@ const login = async (req, res) => {
       return res.status(400).send({ message: "User or password invalid" });
 
     const token = generateToken(user.id);
-    return res.send({ token });
+    return res.send({
+      message: "Login successful",
+      data: { token },
+    });
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 export { login };

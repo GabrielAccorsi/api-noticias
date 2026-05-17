@@ -5,7 +5,7 @@ const userController = {
     try {
       const { name, username, email, password, avatar, background } = req.body;
       if (!name || !username || !email || !password || !avatar || !background) {
-         return res.status(400).send({ messege: "Submit all filds for registration" });
+         return res.status(400).send({ message: "Submit all filds for registration" });
       }
 
       const user = await userService.createService(req.body);
@@ -16,7 +16,7 @@ const userController = {
 
       return res.status(201).send({
         message: "User created successfuly",
-        user: {
+        data: {
           id: user._id,
           name,
           username,
@@ -25,7 +25,7 @@ const userController = {
         },
       });
     } catch (err) {
-      return res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: "Internal server error" });
     }
   },
   findAll: async (req, res) => {
@@ -34,35 +34,42 @@ const userController = {
       if (users.length === 0) {
         return res
           .status(200)
-          .send([]);
+          .send({
+            message: "Users fetched successfully",
+            data: [],
+          });
       }
 
-      return res.send(users().map((item) => ({
-        id: item._id,
-        name: item.name,
-        username: item.username,
-        avatar: item.avatar,
-        background: item.background,
-      })));
+      return res.send({
+        message: "Users fetched successfully",
+        data: users.map((item) => ({
+          id: item._id,
+          name: item.name,
+          username: item.username,
+          avatar: item.avatar,
+          background: item.background,
+        })),
+      });
     } catch (err) {
-      return res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: "Internal server error" });
     }
   },
   findById: async (req, res) => {
     try {
       const { user } = req;
 
-       return res.status(201).send({
-        user: {
+       return res.status(200).send({
+        message: "User fetched successfully",
+        data: {
           id: user._id,
-          name,
-          username,
-          avatar,
-          background,
+          name: user.name,
+          username: user.username,
+          avatar: user.avatar,
+          background: user.background,
         },
       });
     } catch (err) {
-     return res.status(500).send({ message: err.message });
+     return res.status(500).send({ message: "Internal server error" });
     }
   },
   update: async (req, res) => {
@@ -99,7 +106,7 @@ const userController = {
 
       return res.send({ message: "User sucessfully updated" });
     } catch (err) {
-     return res.status(500).send({ message: err.message });
+     return res.status(500).send({ message: "Internal server error" });
     }
   },
 };
