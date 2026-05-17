@@ -89,14 +89,16 @@ const topPosts = async (req, res) => {
     const posts = await topPostsService();
 
     if (!posts || posts.length === 0) {
-      return res.status(400).send({ message: "There are no posts yet :(" });
+      return res.status(404).send({ message: "There are no posts yet :(" });
     }
     return res.send({
-      results: posts.map((item) => ({
+      message: "Top posts fetched successfully",
+      data: posts.map((item) => ({
         id: item._id,
         title: item.title,
         text: item.text,
         banner: item.banner,
+        likesCount: item.likesCount,
         likes: item.likes,
         comments: item.comments,
         name: item.user?.name || "Usuário removido",

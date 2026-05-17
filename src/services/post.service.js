@@ -8,7 +8,30 @@ const findAllService = (offset, limit) =>
 const countPosts = () => Post.countDocuments({});
 
 const topPostsService = () =>
-  Post.find().sort({ likes: -1 }).limit(3).populate("user");
+  Post.aggregate([
+    {
+      $addFields: {
+        likesCount: { $size: "$likes" },
+      },
+    },
+    {
+      $sort: { likesCount: -1 },
+    },
+    {
+      $limit: 3,
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $unwind: "$user",
+    },
+  ]);
 
 const findByIdService = (id) => Post.findById(id).populate("user");
 
