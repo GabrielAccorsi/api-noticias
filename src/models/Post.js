@@ -24,9 +24,9 @@ const PostSchema = new mongoose.Schema({
   },
   likes: {
     type: Array,
-    required: true,
+    default: [],
   },
-  comments: { type: Array, required: true },
+  comments: { type: Array, default: []},
 });
 
 const Post = mongoose.model("Post", PostSchema)

@@ -1,4 +1,3 @@
-import { create } from "../controllers/post.controller.js";
 import Post from "../models/Post.js";
 
 const createService = (body) => Post.create(body);
@@ -9,13 +8,13 @@ const findAllService = (offset, limit) =>
 const countPosts = () => Post.countDocuments({});
 
 const topPostsService = () =>
-  Post.findOne().sort({ likes: -1 }).limit(3).populate("user");
+  Post.find().sort({ likes: -1 }).limit(3).populate("user");
 
 const findByIdService = (id) => Post.findById(id).populate("user");
 
 function searchByTitleService(title) {
   return Post.find({
-    title: { $regex: title.trim(), $options: "i" },
+    title: { $regex: title?.trim(), $options: "i" },
   })
     .sort({ _id: -1 })
     .populate("user");
@@ -51,12 +50,7 @@ const addCommentService = (idPost, comment, userId) => {
     }
   );
 };
-const deleteCommentService = (idPost, idComment, userId) =>
-  Post.findOneAndUpdate(
-    { _id: idPost, "comments.idComment": idComment, "comments.userId": userId },
-    { $pull: { comments: { idComment, userId }}},
-    {new : true}
-  );
+
 
 export {
   createService,
@@ -70,6 +64,5 @@ export {
   eraseService,
   likePostService,
   deleteLikePostService,
-  addCommentService,
-  deleteCommentService,
+  addCommentService
 };
