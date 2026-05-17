@@ -1,11 +1,11 @@
 import userService from "../services/user.service.js";
-
+import bcrypt from "bcrypt"
 const userController = {
   create: async (req, res) => {
     try {
       const { name, username, email, password, avatar, background } = req.body;
       if (!name || !username || !email || !password || !avatar || !background) {
-        res.status(400).send({ messege: "Submit all filds for registration" });
+         return res.status(400).send({ messege: "Submit all filds for registration" });
       }
 
       const user = await userService.createService(req.body);
@@ -14,19 +14,18 @@ const userController = {
         return res.status(400).send({ message: "Error creating user" });
       }
 
-      res.status(201).send({
+      return res.status(201).send({
         message: "User created successfuly",
         user: {
           id: user._id,
           name,
           username,
-          email,
           avatar,
           background,
         },
       });
     } catch (err) {
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     }
   },
   findAll: async (req, res) => {
@@ -34,35 +33,59 @@ const userController = {
       const users = await userService.findAllService();
       if (users.length === 0) {
         return res
-          .status(400)
-          .send({ message: "There are no registered users" });
+          .status(200)
+          .send([]);
       }
 
-      res.send(users);
+      return res.send(users().map((item) => ({
+        id: item._id,
+        name: item.name,
+        username: item.username,
+        avatar: item.avatar,
+        background: item.background,
+      })));
     } catch (err) {
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     }
   },
   findById: async (req, res) => {
     try {
       const { user } = req;
 
-      res.send(user);
+       return res.status(201).send({
+        user: {
+          id: user._id,
+          name,
+          username,
+          avatar,
+          background,
+        },
+      });
     } catch (err) {
-      res.status(500).send({ message: err.message });
+     return res.status(500).send({ message: err.message });
     }
   },
   update: async (req, res) => {
     try {
-      const { name, username, email, password, avatar, background } = req.body;
+      let { name, username, email, password, avatar, background } = req.body;
 
       if (!name && !username && !email && !password && !avatar && !background) {
-        res
+        return res
           .status(400)
-          .send({ messege: "Submit at least one field for update" });
+          .send({ message: "Submit at least one field for update" });
       }
 
       const { id } = req;
+
+      const { userId } = req;
+
+      if (userId !== id) {
+        return res.status(401).send({ message: "You can only update your own user" });
+      }
+      
+      if (password) {
+        password = await bcrypt.hash(password, 10);
+      }
 
       await userService.updateService(
         id,
@@ -74,9 +97,9 @@ const userController = {
         background
       );
 
-      res.send({ message: "User sucessfully updated" });
+      return res.send({ message: "User sucessfully updated" });
     } catch (err) {
-      res.status(500).send({ message: err.message });
+     return res.status(500).send({ message: err.message });
     }
   },
 };
